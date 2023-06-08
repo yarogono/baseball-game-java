@@ -43,12 +43,13 @@ public class BaseballGameAnswerService {
         int out = 3 - (strikeCount + ballCount);
         int maxInning = baseballGame.getBaseballMaxInning();
         int currentInning = baseballGame.getBaseballCurrentInning() + 1;
+        int remainingCount = maxInning - currentInning;
 
 
 
         return BaseballGameAnswerResponseDto.builder()
                 .correct(true)
-                .remainingCount()
+                .remainingCount(remainingCount)
                 .strike(strikeCount)
                 .ball(ballCount)
                 .out(out)
