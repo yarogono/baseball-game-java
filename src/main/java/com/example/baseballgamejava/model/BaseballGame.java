@@ -27,6 +27,9 @@ public class BaseballGame {
     @Column(nullable = false)
     private int baseballMaxInning;
 
+    @Column(nullable = false)
+    private int guessNumber;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;

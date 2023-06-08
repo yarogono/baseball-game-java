@@ -7,10 +7,6 @@ import com.example.baseballgamejava.repository.BaseballGameRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
-
 @Service
 @RequiredArgsConstructor
 public class BaseballGameAnswerService {
@@ -21,12 +17,13 @@ public class BaseballGameAnswerService {
                                                                BaseballGameAnswerRequestDto requestDto) {
 
         BaseballGame baseballGame = getBaseballGameIfExists(baseballGameId);
+        int guessNumber = baseballGame.getGuessNumber();
 
         String answer = requestDto.getAnswer();
 
         // guessNumber 검증 로직 시작
         int[] answerArray = answer.chars().map(c -> c-'0').toArray();
-        int[] guessAnswerArray = Integer.toString(guessNumberGenerator()).chars().map(c -> c-'0').toArray();
+        int[] guessAnswerArray = Integer.toString(guessNumber).chars().map(c -> c-'0').toArray();
 
         int strikeCount = 0;
         int ballCount = 0;
@@ -43,28 +40,19 @@ public class BaseballGameAnswerService {
             }
         }
 
+        int out = 3 - (strikeCount + ballCount);
+        int maxInning = baseballGame.getBaseballMaxInning();
+        int currentInning = baseballGame.getBaseballCurrentInning() + 1;
+
+
+
         return BaseballGameAnswerResponseDto.builder()
-                .correct()
+                .correct(true)
                 .remainingCount()
                 .strike(strikeCount)
                 .ball(ballCount)
-                .out()
+                .out(out)
                 .build();
-    }
-
-    // ToDo: guessNumber 로직을 baseballGame 내부로 변경
-    private int guessNumberGenerator() {
-        List<Integer> randomNumbers = new Random()
-                .ints(1, 9)
-                .distinct()
-                .limit(3)
-                .boxed()
-                .collect(Collectors.toList());
-        int sum = 0;
-        for (int j = 0; j < randomNumbers.size(); j++) {
-            sum += randomNumbers.get(j) * (Math.pow(10, randomNumbers.size() - j - 1));
-        }
-        return sum;
     }
 
     private BaseballGame getBaseballGameIfExists(Long baseballGameId) {
